@@ -1,21 +1,22 @@
 import { useState } from 'react';
 import { v4 as uuidv4 } from "uuid";
 
-export default function CreateTodo ({user, todos, setTodos }) {
+export default function CreateTodo ({user, dispatch }) {
     const [ title, setTitle ] = useState('')
-    const [ description, setDesc ] = useState('')
+    const [ content, setContent ] = useState('')
 
-    function handleCreate () { 
-        const newTodo = { title, description, author: user , dateCreated: Date.now(), id: uuidv4(),};
-        setTodos([ newTodo, ...todos ]);
-    }
+    // function handleCreate () { 
+    //     const newTodo = { title, content, author: user , dateCreated: Date.now(), id: uuidv4(),};
+    //     setTodos([ newTodo, ...todos ]);
+    // }
   
  
     return (
         <form
         onSubmit={(e) => {
             e.preventDefault(); 
-            handleCreate ();
+            // handleCreate ();
+            dispatch({ type: "CREATE_TODO", title, content, author: user, dateCreated: Date.now(), id: uuidv4(), dispatch});
         }}
       >
         <div>
@@ -32,8 +33,8 @@ export default function CreateTodo ({user, todos, setTodos }) {
           />
         </div>
         <textarea
-          value={description}
-          onChange={(event) => setDesc(event.target.value)}
+          value={content}
+          onChange={(event) => setContent(event.target.value)}
         />
         <input type="submit" value="Create" disabled={title.length === 0}/>
       </form>

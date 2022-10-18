@@ -1,32 +1,39 @@
-import { useState } from "react";
+import { useReducer } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 import UserBar from "./user/UserBar";
 import CreateTodo from "./todo/CreateTodo";
 import TodoList from "./todo/TodoList";
 
+import appReducer from "./reducers";
+
 function App() {
-  const [ user, setUser ] = useState('');
+  // const [ user, setUser ] = useState('');
 
   const init = [
     {
       title: "test todo",
-      description: "If you seen this, means it's worked",
+      content: "If you seen this, means it's worked",
       author: "Me",
       dateCreated: Date.now(),
+      complete: false,
       id: uuidv4(),
     },
   ]
 
-  const [ todos, setTodos ] = useState(init)
+  // const [user, dispatchUser] = useReducer(userReducer, "");
+  const [state, dispatch] = useReducer(appReducer, {
+    user: "",
+    todos: init,
+  });
 
   return (
     <div>
-      <UserBar user={user} setUser={setUser} />
-      <TodoList todos={todos} />
+      <UserBar user={state.user} dispatch={dispatch} />
+      <TodoList todos={state.todos} />
       <br />
       <br />
-      {user && <CreateTodo user={user} todos={todos} setTodos={setTodos} />}
+      {state.user && <CreateTodo user={state.user} dispatch={dispatch} />}
     </div>
   )       
 }
