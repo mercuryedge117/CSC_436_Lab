@@ -1,0 +1,28 @@
+{
+  "todos": [
+    {
+      "title": "test todo",
+      "content": "If you seen this, means it worked",
+      "author": "Me",
+      "dateCreated": 1667698243097,
+      "complete": false,
+      "id": 1
+    },
+    {
+      "title": "test todo in db",
+      "content": "If you seen this, means it's from database",
+      "author": "Me",
+      "dateCreated": 1667698243099,
+      "complete": true,
+      "id": 2,
+      "dateCompleted": "1667707278842"
+    }
+  ],
+  "users": [
+    {
+      "email": "abc@test.com",
+      "password": "$2a$10$1TtV4VRsbRutQtyQksu0EOtwu4.1c1SohuWIkq04rLhDatUfHUWuu",
+      "id": 1
+    }
+  ]
+}
