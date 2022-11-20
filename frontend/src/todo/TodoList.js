@@ -11,31 +11,35 @@ export default function TodoList () {
     const { todos } = state;
 
     const [ todoDelete, deleteTodo ] = useResource(({ id }) => ({
-        url: `/todos/${id}`,
-        method: 'delete'
+        url: `/todo/${id}`,
+        method: 'delete',
+        headers: {Authorization: `${state?.user?.access_token}`},
         }));
 
     const [ todoPatch, patchTodo ] = useResource(({ id, complete, dateCompleted }) => ({
-        url: `/todos/${id}`,
+        url: `/todo/${id}`,
         method: 'patch',
+        headers: {Authorization: `${state?.user?.access_token}`},
         data: {complete, dateCompleted}
         }));
 
     return (
         <div>
-            {todos.map((p) => 
-            <div key={p.id} >
+            {todos.length === 0 && <h2>No todos found.</h2>}
+            {todos.length > 0 && todos.map((p) => 
+            <div key={p._id} >
             <Todo {...p}/>
             <small>Check when Completed: </small>
             <input type="checkbox" name="complete-check" checked={p.complete}
                 onChange={
                     (event) => {
-                        patchTodo({id: p.id, complete: event.target.checked, dateCompleted: Date.now().toString()})
+                        const dateComp = ((event.target.checked) ? Date.now().toString() : "N/A");
+                        patchTodo({id: p._id, complete: event.target.checked, dateCompleted: dateComp})
                         dispatch({ 
                             type: "TOGGLE_TODO", 
-                            id: p.id, 
+                            id: p._id, 
                             checked: event.target.checked,
-                            dateComp: Date.now().toString(),
+                            dateComp: dateComp,
                         });
                     }} />
             <br />
@@ -44,8 +48,8 @@ export default function TodoList () {
                 name="Delete" 
                 value="Delete"
                 onClick={() => {
-                    deleteTodo({id: p.id});
-                    dispatch({ type: "DELETE_TODO", id: p.id});}
+                    deleteTodo({id: p._id});
+                    dispatch({ type: "DELETE_TODO", id: p._id});}
                     } />
             </div>
             )}

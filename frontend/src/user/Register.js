@@ -11,16 +11,25 @@ export default function Register() {
         passwordRepeat: "",
     })
 
+    const [status, setStatus] = useState("");
     const [user, register] = useResource((username, password) => ({
-        url: "/users",
+        url: "auth/register",
         method: "post",
-        data: { email: username, password },
+        data: { username, password },
       }));
     
     useEffect(() => {
-        if (user && user.data && user.data.user.email) {
-          //user.error === undefined
-          dispatch({ type: "REGISTER", username: user.data.user.email });
+        if (user && user.isLoading === false && (user.data || user.error)) {
+            if (user.error) {
+              setStatus("Registration failed, please try again later.");
+            } else {
+              setStatus("Registrtion successful.");
+              dispatch({ 
+                type: "REGISTER", 
+                username: user.data.username,
+                access_token: user.data.access_token,
+              });
+            }
         }
     }, [user]);
  
@@ -63,6 +72,7 @@ export default function Register() {
                 formData.password !== formData.passwordRepeat 
                 } 
             />
+        <p>{status}</p>
     </form>
     )
 }

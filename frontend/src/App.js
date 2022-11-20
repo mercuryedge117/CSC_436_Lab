@@ -10,32 +10,28 @@ import { StateContext } from "./contexts";
 
 function App() {
 
-  const init = [
-    // {
-    //   title: "test todo",
-    //   content: "If you seen this, means it's worked",
-    //   author: "Me",
-    //   dateCreated: Date.now().toString(),
-    //   complete: false,
-    //   id: uuidv4(),
-    // },
-  ]
+  const init = []
 
   const [state, dispatch] = useReducer(appReducer, {
-    user: "",
+    user: null,
     todos: init,
   });
 
   const [todos, getTodos] = useResource(() => ({
-    url: "/todos",
+    url: "/todo",
     method: "get",
+    headers: {Authorization: `${state?.user?.access_token}`}
   }));
 
-  useEffect(getTodos, []);
+  useEffect(getTodos, [state?.user?.access_token]);
 
   useEffect(() => {
-    if (todos && todos.data) {
-      dispatch({ type: "FETCH_TODOS", todos: todos.data.reverse() });
+    if (todos && todos.isLoading === false && (todos.data || todos.error)) {
+      if (todos.error) {
+        console.log(todos.error.message);
+      } else {
+        dispatch({ type: "FETCH_TODOS", todos: todos.data.todos.reverse() });
+      }
     }
   }, [todos]);
 
@@ -48,12 +44,6 @@ function App() {
           <br />
           {state.user && <CreateTodo />}
       </StateContext.Provider>
-
-      {/* <UserBar user={state.user} dispatch={dispatch} />
-      <TodoList todos={state.todos} dispatch={dispatch}/>
-      <br />
-      <br />
-      {state.user && <CreateTodo user={state.user} dispatch={dispatch}/>} */}
     </div>
   )       
 }

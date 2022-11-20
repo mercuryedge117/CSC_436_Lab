@@ -1,5 +1,4 @@
 import { useState, useContext, useEffect } from 'react';
-// import { v4 as uuidv4 } from "uuid";
 
 import { StateContext } from '../contexts';
 import { useResource } from "react-request-hook";
@@ -13,17 +12,18 @@ export default function CreateTodo () {
     const { user } = state;
 
     const [ todo , createTodo ] = useResource(({ title, content, author, dateCreated, complete }) => ({
-      url: '/todos',
+      url: '/todo',
       method: 'post',
+      headers: {Authorization: `${state?.user?.access_token}`},
       data: { title, content, author, dateCreated, complete }
     }));
 
     useEffect(() => {
       if (todo?.error) {
         setError(true);
-        //alert("Something went wrong creating post.");
       }
       if (todo?.isLoading === false && todo?.data) {
+        setError(false);
         dispatch({
           type: "CREATE_TODO",
           title: todo.data.title,
@@ -40,12 +40,12 @@ export default function CreateTodo () {
         <form
         onSubmit={(e) => {
             e.preventDefault(); 
-            createTodo({title, content, author: user, 
+            createTodo({title, content, author: user.username,
               dateCreated: Date.now().toString(), complete: false});
         }}
         >
         <div>
-          Author: <b>{user}</b>
+          Author: <b>{user.username}</b>
         </div>
         <div>
           {error && (
